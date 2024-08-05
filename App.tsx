@@ -16,6 +16,8 @@ import {styles} from './src/styles';
 import ThemeContextProvider, {
   MyThemeContext,
 } from './src/contexts/ThemeContext';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const {theme} = useContext(MyThemeContext);
@@ -33,9 +35,11 @@ function App(): React.JSX.Element {
 }
 
 const AppWrapper = () => (
-  <ThemeContextProvider>
-    <App />
-  </ThemeContextProvider>
+  <Provider store={store}>
+    <ThemeContextProvider>
+      <App />
+    </ThemeContextProvider>
+  </Provider>
 );
 
 export default AppWrapper;

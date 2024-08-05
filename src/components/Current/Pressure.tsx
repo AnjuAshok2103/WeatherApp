@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {styles} from '../../styles';
 import {Current, CurrentUnits} from '../../types';
 import {classifyPressure} from '../../utils';
+import Gauge from '../Icons/Gauge';
+import GaugeWrapper from '../Icons/Gauge';
 
 const Pressure = ({
   currentData,
@@ -34,7 +36,7 @@ const Pressure = ({
           />
           <Text style={{fontSize: 18}}>Pressure</Text>
         </View>
-
+        <GaugeWrapper pressure={currentData.surface_pressure} />
         <View
           style={{
             flex: 1,

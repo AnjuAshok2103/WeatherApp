@@ -1,100 +1,138 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import CurrentWeatherData from '../components/Current';
+import DailyWeatherData from '../components/Daily';
 import HourlyWeatherCard from '../components/Hourly';
 import {styles} from '../styles';
-import {
-  Current,
-  Daily,
-  DetailsScreenProps,
-  Hourly,
-  WeatherData,
-} from '../types';
+import {DetailsScreenProps, WeatherData} from '../types';
 import {getFirstWord, getWeatherDescription} from '../utils';
-import DailyWeatherData from '../components/Daily';
-import CurrentWeatherData from '../components/Current';
-import {ScrollView} from 'react-native-gesture-handler';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import {addWeatherData} from '../features/weather/weatherSlice';
 
+export const weatherDataInitial = {
+  title: '',
+  latitude: 0,
+  longitude: 0,
+  generationtime_ms: 0,
+  utc_offset_seconds: 0,
+  timezone: '',
+  timezone_abbreviation: '',
+  elevation: 0,
+  current_units: {
+    time: '',
+    interval: '',
+    temperature_2m: '',
+    is_day: '',
+    precipitation: '',
+    weather_code: '',
+    wind_speed_10m: '',
+    surface_pressure: '',
+    wind_direction_10m: '',
+    wind_gusts_10m: '',
+    relative_humidity_2m: '',
+  },
+  current: {
+    time: '',
+    interval: 0,
+    temperature_2m: 0,
+    is_day: 0,
+    precipitation: 0,
+    weather_code: 0,
+    wind_speed_10m: 0,
+    surface_pressure: 0,
+    wind_direction_10m: 0,
+    wind_gusts_10m: '',
+    relative_humidity_2m: 0,
+  },
+  hourly_units: {
+    time: '',
+    weather_code: 0,
+    temperature_2m: '',
+  },
+  hourly: {
+    time: [],
+    temperature_2m: [],
+    weather_code: [],
+  },
+  daily_units: {
+    time: '',
+    weather_code: '',
+    sunset: '',
+    sunrise: '',
+    temperature_2m_max: '',
+    temperature_2m_min: '',
+    uv_index_max: '',
+    uv_index_clear_sky_max: '',
+  },
+  daily: {
+    time: [],
+    weather_code: [],
+    sunset: [],
+    sunrise: [],
+    temperature_2m_max: [],
+    temperature_2m_min: [],
+    uv_index_max: [],
+    uv_index_clear_sky_max: [],
+  },
+};
 const Details = ({navigation, route}: DetailsScreenProps) => {
   const [weatherData, setWeatherData] = useState<WeatherData>({
-    title: '',
-    latitude: 0,
-    longitude: 0,
-    generationtime_ms: 0,
-    utc_offset_seconds: 0,
-    timezone: '',
-    timezone_abbreviation: '',
-    elevation: 0,
-    current_units: {
-      time: '',
-      interval: '',
-      temperature_2m: '',
-      is_day: '',
-      precipitation: '',
-      weather_code: '',
-      wind_speed_10m: '',
-      surface_pressure: '',
-      wind_direction_10m: '',
-      wind_gusts_10m: '',
-      relative_humidity_2m: '',
-    },
-    current: {
-      time: '',
-      interval: 0,
-      temperature_2m: 0,
-      is_day: 0,
-      precipitation: 0,
-      weather_code: 0,
-      wind_speed_10m: 0,
-      surface_pressure: 0,
-      wind_direction_10m: 0,
-      wind_gusts_10m: '',
-      relative_humidity_2m: 0,
-    },
-    hourly_units: {
-      time: '',
-      weather_code: 0,
-      temperature_2m: '',
-    },
-    hourly: {
-      time: [],
-      temperature_2m: [],
-      weather_code: [],
-    },
-    daily_units: {
-      time: '',
-      weather_code: '',
-      sunset: '',
-      sunrise: '',
-      temperature_2m_max: '',
-      temperature_2m_min: '',
-      uv_index_max: '',
-      uv_index_clear_sky_max: '',
-    },
-    daily: {
-      time: [],
-      weather_code: [],
-      sunset: [],
-      sunrise: [],
-      temperature_2m_max: [],
-      temperature_2m_min: [],
-      uv_index_max: [],
-      uv_index_clear_sky_max: [],
-    },
+    ...weatherDataInitial,
   });
+  const weatherDataInStore = useAppSelector(state => state.weather.weatherData);
+  const [includesInDataAlready, setIncludesInDataAlready] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const handleAddWeatherData = (data: WeatherData) => {
+    dispatch(addWeatherData(data));
+    setTimeout(() => {
+      navigation.goBack();
+    }, 500);
+  };
 
   useEffect(() => {
     if (route.params) {
       let weatherData: WeatherData = route.params.weatherData;
       if (weatherData) {
         setWeatherData(weatherData);
+        checkInList();
       }
     }
   }, [route.params]);
 
+  const checkInList = () => {
+    let includes = weatherDataInStore.includes(weatherData, 0);
+    console.log('includes', includes);
+    setIncludesInDataAlready(includes);
+  };
+
   return (
-    <SafeAreaView style={{...styles.containerFlex, ...styles.gap10}}>
+    <SafeAreaView
+      style={{
+        ...styles.containerFlex,
+        ...styles.gap10,
+        backgroundColor: 'pink',
+      }}>
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: 10,
+        }}>
+        {!includesInDataAlready && (
+          <TouchableOpacity onPress={() => handleAddWeatherData(weatherData)}>
+            <Text style={{fontSize: 16}}>Add</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={{fontSize: 16}}>Cancel</Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView>
         <View
           style={{

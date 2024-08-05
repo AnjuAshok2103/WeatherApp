@@ -80,7 +80,7 @@ const SunAnimation: React.FC<SunAnimationProps> = ({uvIndex = 1}) => {
       <View
         style={{
           position: 'absolute',
-          bottom: fillHeight - iconSize / 2,
+          bottom: !Number.isNaN(fillHeight) ? fillHeight - iconSize / 2 : 0,
           left: -iconSize,
         }}>
         <Icon

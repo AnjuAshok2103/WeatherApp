@@ -3,7 +3,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 export type RootStackParamsList = {
   MainScreen: undefined;
   Appearance: undefined;
-  Details: {weatherData: Weather};
+  Details: {weatherData: WeatherData};
 };
 
 export type MainScreenProps = NativeStackScreenProps<

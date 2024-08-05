@@ -1,6 +1,13 @@
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {NativeScrollEvent, NativeSyntheticEvent, View} from 'react-native';
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react-native/no-inline-styles */
+import React, {useRef, useState} from 'react';
+import {
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import GooglePlacesInput from '../components/GooglePlacesInput';
 import Title from '../components/Title';
@@ -11,9 +18,26 @@ import {
   MainScreenProps,
   WeatherData,
 } from '../types';
-import moment from 'moment';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
+import {removeWeatherData} from '../features/weather/weatherSlice';
+import {Divider, Text} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Feather';
+import {useFocusEffect} from '@react-navigation/native';
+import useKeyboardVisible from '../customHook/useKeyboardVisible';
+
+type googlePlaceInputHandle = React.ElementRef<typeof GooglePlacesInput>;
 
 export default function MainScreen({navigation, route}: MainScreenProps) {
+  const googlePlaceInputRef = useRef<googlePlaceInputHandle>(null);
+
+  const isKeyboardVisible = useKeyboardVisible();
+  const dispatch = useAppDispatch();
+  const weatherData = useAppSelector(state => state.weather.weatherData);
+
+  const handleRemoveWeatherData = (index: number) => {
+    dispatch(removeWeatherData({index: index}));
+  };
+
   const scrollHandler = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     console.log(event.nativeEvent.contentOffset.y);
     const {contentOffset} = event.nativeEvent;
@@ -51,7 +75,7 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
           title: title,
           ...json,
         };
-        console.log('json', JSON.stringify(jsonToSend));
+        console.log('json', JSON.stringify(jsonToSend.title));
 
         navigation.navigate('Details', {weatherData: jsonToSend});
       })
@@ -73,6 +97,33 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
     }, 1500);
   }
 
+  type ItemProps = {index: number; title: string};
+
+  const Item = ({title, index}: ItemProps) => (
+    <TouchableOpacity
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 15,
+      }}
+      key={title}
+      onPress={() =>
+        navigation.navigate('Details', {weatherData: weatherData[index]})
+      }>
+      <Text>{title}</Text>
+      <TouchableOpacity onPress={() => handleRemoveWeatherData(index)}>
+        <Icon testID="TrashIcon" name="trash-2" size={20} color="black" />
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      googlePlaceInputRef?.current?.focusAndClear();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [route]),
+  );
   return (
     <ScrollView
       onScroll={scrollHandler}
@@ -85,12 +136,36 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
           contentContainerStyle={{
             display: 'flex',
             flexGrow: 1,
+            flexDirection: 'column',
+            gap: 20,
+            paddingHorizontal: 10,
           }}
           horizontal
           keyboardShouldPersistTaps="handled">
-          <View style={{marginHorizontal: 10, flex: 1}}>
-            <GooglePlacesInput onPress={ReceiveGooglerPlacesData} />
+          <View
+            style={{
+              flex: 1,
+            }}>
+            <GooglePlacesInput
+              ref={googlePlaceInputRef}
+              onPress={ReceiveGooglerPlacesData}
+            />
           </View>
+          {!isKeyboardVisible && (
+            <View
+              style={{
+                flex: 1,
+              }}>
+              <FlatList
+                data={weatherData}
+                renderItem={({item, index}) => (
+                  <Item title={item.title} index={index} />
+                )}
+                keyExtractor={item => item.title}
+                ItemSeparatorComponent={() => <Divider />}
+              />
+            </View>
+          )}
         </ScrollView>
       </View>
     </ScrollView>
