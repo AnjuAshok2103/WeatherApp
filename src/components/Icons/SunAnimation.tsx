@@ -39,8 +39,6 @@ const SunAnimation: React.FC<SunAnimationProps> = ({uvIndex = 1}) => {
   setTimeout(() => {
     animate();
   }, 800);
-  console.log('fillHeight', fillHeight);
-  console.log('uv', uvIndex);
 
   return (
     <View

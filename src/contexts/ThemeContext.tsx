@@ -1,12 +1,14 @@
 import React, {createContext, useState} from 'react';
-import {ThemeProps} from '../types';
-import {DefaultTheme, PaperProvider} from 'react-native-paper';
-import {Appearance, useColorScheme} from 'react-native';
-import {DarkTheme} from '@react-navigation/native';
+import {AppTheme, AppThemeType, ThemeProps} from '../types';
+import {PaperProvider} from 'react-native-paper';
+import {useColorScheme} from 'react-native';
+import {CombinedDarkTheme, CombinedDefaultTheme} from '../theme/theme';
 
 export const MyThemeContext = createContext<ThemeProps>({
   isThemeDark: false,
   toggleTheme: () => {},
+  appTheme: 'SYSTEM',
+  theme: CombinedDefaultTheme,
 });
 
 interface ThemeInterface {
@@ -14,25 +16,29 @@ interface ThemeInterface {
 }
 
 export default function ThemeContextProvider(props: ThemeInterface) {
-  const colorScheme = useColorScheme();
+  const systemTheme = useColorScheme();
   const [isThemeDark, setIsThemeDark] = useState(false);
+  const [appTheme, setAppTheme] = useState<AppTheme>(AppThemeType.system);
   const [theme, setTheme] = useState(
-    colorScheme === 'dark' ? DarkTheme : DefaultTheme,
+    systemTheme === 'dark' ? CombinedDarkTheme : CombinedDefaultTheme,
   );
-  const toggleTheme = React.useCallback(() => {
-    return setIsThemeDark(!isThemeDark);
-  }, [isThemeDark]);
+  const toggleTheme = (key: string) => {
+    console.log('key', key);
+    setAppTheme(key as AppTheme);
 
-  const preferences = React.useMemo(
-    () => ({
-      toggleTheme,
-      isThemeDark,
-    }),
-    [toggleTheme, isThemeDark],
-  );
+    setIsThemeDark(
+      key === 'DARK' || (key === 'SYSTEM' && systemTheme === 'dark'),
+    );
+    setTheme(
+      key === 'DARK' || (key === 'SYSTEM' && systemTheme === 'dark')
+        ? CombinedDarkTheme
+        : CombinedDefaultTheme,
+    );
+  };
 
   return (
-    <MyThemeContext.Provider value={preferences}>
+    <MyThemeContext.Provider
+      value={{isThemeDark, appTheme, theme, toggleTheme}}>
       <PaperProvider theme={theme}>{props.children}</PaperProvider>
     </MyThemeContext.Provider>
   );

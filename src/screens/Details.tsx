@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -101,6 +102,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
         checkInList();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params]);
 
   const checkInList = () => {
@@ -114,7 +116,6 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       style={{
         ...styles.containerFlex,
         ...styles.gap10,
-        backgroundColor: 'pink',
       }}>
       <View
         style={{
@@ -123,14 +124,14 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
           justifyContent: 'space-between',
           paddingHorizontal: 10,
         }}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={{fontSize: 16}}>Cancel</Text>
+        </TouchableOpacity>
         {!includesInDataAlready && (
           <TouchableOpacity onPress={() => handleAddWeatherData(weatherData)}>
             <Text style={{fontSize: 16}}>Add</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{fontSize: 16}}>Cancel</Text>
-        </TouchableOpacity>
       </View>
 
       <ScrollView>

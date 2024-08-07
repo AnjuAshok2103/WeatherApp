@@ -1,15 +1,10 @@
-import React, {
-  forwardRef,
-  Ref,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from 'react';
+import React, {forwardRef, Ref, useImperativeHandle, useRef} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import * as Icons from 'react-native-heroicons/outline';
 import {styles} from '../styles';
 import {GooglePlacesProps} from '../types';
+import {useTheme} from 'react-native-paper';
 
 const GooglePlacesInput = forwardRef(
   (
@@ -20,10 +15,12 @@ const GooglePlacesInput = forwardRef(
   ) => {
     const {onPress} = props;
     const googlePlacesRef = useRef(null);
+    const {colors} = useTheme();
 
     useImperativeHandle(ref, () => ({
       focusAndClear,
     }));
+
     function focusAndClear() {
       googlePlacesRef?.current?.clear();
       googlePlacesRef?.current?.focus();
@@ -65,7 +62,7 @@ const GooglePlacesInput = forwardRef(
         debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
         textInputProps={{
           testID: 'GooglePlaceInput',
-          placeholderTextColor: 'gray',
+          placeholderTextColor: colors.surfaceVariant,
           returnKeyType: 'search',
           clearButtonMode: 'never',
         }}
@@ -78,10 +75,10 @@ const GooglePlacesInput = forwardRef(
             borderRadius: 12,
           },
           description: {
-            color: 'black',
+            color: colors.onSurfaceVariant,
           },
           textInput: {
-            color: 'black',
+            color: colors.onSurfaceVariant,
             backgroundColor: 'transparent',
             margin: 5,
             borderRadius: 12,
@@ -109,7 +106,7 @@ const GooglePlacesInput = forwardRef(
             onPress={() => {
               googlePlacesRef?.current?.focus();
             }}>
-            <Icons.MagnifyingGlassIcon />
+            <Icons.MagnifyingGlassIcon color={colors.primary} />
           </TouchableOpacity>
         )}
         renderRightButton={() => (
@@ -118,7 +115,7 @@ const GooglePlacesInput = forwardRef(
             onPress={() => {
               googlePlacesRef?.current?.clear();
             }}>
-            <Icons.XMarkIcon />
+            <Icons.XMarkIcon color={colors.primary} />
           </TouchableOpacity>
         )}
       />

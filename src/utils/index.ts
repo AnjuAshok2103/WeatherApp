@@ -66,9 +66,11 @@ export function formatDate(isoString: string): string {
 export function formatDateTime({
   isoString,
   showMinutes,
+  showNow = true,
 }: {
   isoString: string;
   showMinutes?: boolean;
+  showNow?: boolean;
 }): string {
   const date = new Date(isoString);
   const now = new Date();
@@ -78,7 +80,8 @@ export function formatDateTime({
     date.getFullYear() === now.getFullYear() &&
     date.getMonth() === now.getMonth() &&
     date.getDate() === now.getDate() &&
-    date.getHours() === now.getHours()
+    date.getHours() === now.getHours() &&
+    showNow
   ) {
     return 'Now';
   }

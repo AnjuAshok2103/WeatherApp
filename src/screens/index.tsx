@@ -1,49 +1,116 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {
-  FlatList,
+  Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import * as Icons from 'react-native-heroicons/outline';
+import {Divider, IconButton, Menu, Text, useTheme} from 'react-native-paper';
+import {SwipeListView} from 'react-native-swipe-list-view';
 import GooglePlacesInput from '../components/GooglePlacesInput';
 import Title from '../components/Title';
+import {MyThemeContext} from '../contexts/ThemeContext';
+import useKeyboardVisible from '../customHook/useKeyboardVisible';
+import {removeWeatherData} from '../features/weather/weatherSlice';
+import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {styles} from '../styles';
 import {
+  googlePlaceInputHandle,
   GooglePlacesData,
+  ItemProps,
   Location,
   MainScreenProps,
   WeatherData,
 } from '../types';
-import {useAppDispatch, useAppSelector} from '../redux/hooks';
-import {removeWeatherData} from '../features/weather/weatherSlice';
-import {Divider, Text} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Feather';
-import {useFocusEffect} from '@react-navigation/native';
-import useKeyboardVisible from '../customHook/useKeyboardVisible';
-
-type googlePlaceInputHandle = React.ElementRef<typeof GooglePlacesInput>;
+import {
+  formatDateTime,
+  getFirstWord,
+  getWeatherDescription,
+  roundTemperature,
+} from '../utils';
 
 export default function MainScreen({navigation, route}: MainScreenProps) {
-  const googlePlaceInputRef = useRef<googlePlaceInputHandle>(null);
-
-  const isKeyboardVisible = useKeyboardVisible();
+  const googlePlaceInputRef = useRef<googlePlaceInputHandle>(null); //google places ref
+  const isKeyboardVisible = useKeyboardVisible(); //custom hook
   const dispatch = useAppDispatch();
   const weatherData = useAppSelector(state => state.weather.weatherData);
+  const {colors} = useTheme();
+  const {appTheme, theme, toggleTheme} = useContext(MyThemeContext);
+
+  const [visible, setVisible] = React.useState(false);
+
+  const openMenu = () => setVisible(true);
+
+  const closeMenu = () => setVisible(false);
+
+  // eslint-disable-next-line react/no-unstable-nested-components
+  const MoreMenu = () => (
+    <Menu
+      visible={visible}
+      onDismiss={closeMenu}
+      anchorPosition="bottom"
+      anchor={
+        <TouchableOpacity
+          onPress={() => openMenu()}
+          style={styles.padding5AlignC}>
+          <Icons.EllipsisHorizontalCircleIcon
+            size={25}
+            color={colors.primary}
+          />
+        </TouchableOpacity>
+      }>
+      <Menu.Item
+        onPress={() => {
+          closeMenu();
+        }}
+        title="Edit"
+        leadingIcon={'pencil-outline'}
+      />
+      <Divider />
+      <Menu.Item
+        onPress={() => {}}
+        title="Celcius"
+        leadingIcon={'temperature-celsius'}
+      />
+      <Divider />
+      <Menu.Item
+        onPress={() => {}}
+        title="Fahrenheit"
+        leadingIcon={'temperature-fahrenheit'}
+      />
+      <Menu.Item
+        onPress={() => {
+          closeMenu();
+          navigation.navigate('Appearance');
+        }}
+        title="Theme"
+        leadingIcon={'theme-light-dark'}
+      />
+    </Menu>
+  );
+
+  useEffect(() => {
+    console.log('theme', appTheme);
+    navigation.setOptions({
+      headerRight: MoreMenu,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme, visible]);
 
   const handleRemoveWeatherData = (index: number) => {
     dispatch(removeWeatherData({index: index}));
   };
 
   const scrollHandler = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    console.log(event.nativeEvent.contentOffset.y);
     const {contentOffset} = event.nativeEvent;
     if (contentOffset.y >= 80) {
       navigation.setOptions({
         headerTitle: 'Weather',
+        headerTintColor: 'red',
       });
     } else {
       navigation.setOptions({
@@ -97,77 +164,119 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
     }, 1500);
   }
 
-  type ItemProps = {index: number; title: string};
-
-  const Item = ({title, index}: ItemProps) => (
+  const Item = ({item, index}: ItemProps) => (
     <TouchableOpacity
       style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
+        margin: 10,
+        borderRadius: 10,
+        overflow: 'hidden',
+        backgroundColor: colors.secondaryContainer,
+        padding: 10,
+        gap: 15,
       }}
-      key={title}
       onPress={() =>
         navigation.navigate('Details', {weatherData: weatherData[index]})
       }>
-      <Text>{title}</Text>
-      <TouchableOpacity onPress={() => handleRemoveWeatherData(index)}>
-        <Icon testID="TrashIcon" name="trash-2" size={20} color="black" />
-      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}>
+        <View style={{gap: 4}}>
+          <Text style={{fontSize: 16}}>{getFirstWord(item.title)}</Text>
+          <Text style={{fontSize: 14}}>
+            {formatDateTime({
+              isoString: item.current.time,
+              showMinutes: true,
+              showNow: false,
+            })}
+          </Text>
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: 24,
+            }}>{`${item.current.temperature_2m}\u00B0`}</Text>
+        </View>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+        }}>
+        <Text>{getWeatherDescription(item.current.weather_code)}</Text>
+        <View style={{alignItems: 'center'}}>
+          <Text>{`H:${roundTemperature(
+            item.daily.temperature_2m_max[0],
+          )}\u00B0 L:${roundTemperature(
+            item.daily.temperature_2m_min[0],
+          )}\u00B0`}</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      googlePlaceInputRef?.current?.focusAndClear();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [route]),
-  );
   return (
-    <ScrollView
-      onScroll={scrollHandler}
-      contentInsetAdjustmentBehavior="automatic"
-      nestedScrollEnabled
-      keyboardShouldPersistTaps="handled">
-      <View style={{...styles.containerFlex}}>
-        <Title title="Weather" />
-        <ScrollView
-          contentContainerStyle={{
-            display: 'flex',
-            flexGrow: 1,
-            flexDirection: 'column',
-            gap: 20,
-            paddingHorizontal: 10,
-          }}
-          horizontal
-          keyboardShouldPersistTaps="handled">
-          <View
-            style={{
-              flex: 1,
-            }}>
+    <View
+      style={{
+        ...styles.containerFlex,
+        backgroundColor: colors.background,
+      }}>
+      <SwipeListView
+        onScroll={scrollHandler}
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="on-drag"
+        ListHeaderComponent={
+          <View style={{flex: 1, padding: 10}}>
+            <Title title="Weather" />
             <GooglePlacesInput
               ref={googlePlaceInputRef}
               onPress={ReceiveGooglerPlacesData}
             />
           </View>
-          {!isKeyboardVisible && (
-            <View
+        }
+        data={weatherData}
+        renderItem={({item, index}) =>
+          !isKeyboardVisible ? <Item item={item} index={index} /> : <View />
+        }
+        renderHiddenItem={({item, index}) =>
+          !isKeyboardVisible ? (
+            <TouchableOpacity
               style={{
+                alignItems: 'center',
+                backgroundColor: 'red',
                 flex: 1,
-              }}>
-              <FlatList
-                data={weatherData}
-                renderItem={({item, index}) => (
-                  <Item title={item.title} index={index} />
-                )}
-                keyExtractor={item => item.title}
-                ItemSeparatorComponent={() => <Divider />}
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                paddingRight: 15,
+                borderRadius: 10,
+                margin: 10,
+              }}
+              activeOpacity={1}>
+              <IconButton
+                icon="trash-can"
+                size={30}
+                iconColor={colors.primary}
+                onPress={() => handleRemoveWeatherData(index)}
               />
-            </View>
-          )}
-        </ScrollView>
-      </View>
-    </ScrollView>
+            </TouchableOpacity>
+          ) : (
+            <View />
+          )
+        }
+        rightOpenValue={-Dimensions.get('screen').width}
+        keyExtractor={item => item.title}
+        onSwipeValueChange={({key, value}) => {
+          if (value < -Dimensions.get('screen').width) {
+            console.log('vlaue', value);
+            handleRemoveWeatherData(
+              weatherData.findIndex(item => item.title.includes(key)),
+            );
+          }
+        }}
+      />
+    </View>
   );
 }

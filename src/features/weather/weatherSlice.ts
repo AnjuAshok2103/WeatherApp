@@ -21,11 +21,9 @@ export const weatherSlice = createSlice({
       state.weatherData.push(action.payload);
     },
     removeWeatherData: (state, action) => {
-      console.log(`reducer remove ${JSON.stringify(action)}`);
       state.weatherData = state.weatherData.filter(
         (item, index) => index !== action.payload.index,
       );
-      console.log('state', JSON.stringify(state.weatherData.length));
     },
   },
 });

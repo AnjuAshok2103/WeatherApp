@@ -25,7 +25,7 @@ function App(): React.JSX.Element {
   return (
     <GestureHandlerRootView style={{...styles.containerFlex}}>
       <SafeAreaProvider>
-        <NavigationContainer>
+        <NavigationContainer theme={theme}>
           <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
           <RootStackNavigator />
         </NavigationContainer>

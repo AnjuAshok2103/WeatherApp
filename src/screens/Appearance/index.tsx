@@ -1,36 +1,42 @@
+import React, {useContext, useEffect, useState} from 'react';
 import {useColorScheme, View} from 'react-native';
-import React, {useState} from 'react';
-import {List, RadioButton, useTheme} from 'react-native-paper';
-import {AppearanceScreenProps} from '../../types';
+import {Divider, List, useTheme} from 'react-native-paper';
+import {AppearanceScreenProps, AppTheme} from '../../types';
+import {MyThemeContext} from '../../contexts/ThemeContext';
 
-const ListIcon = () => <List.Icon icon="tick" />;
+const ListIcon = (color: string) => <List.Icon icon="check" color={color} />;
 const Appearance = (props: AppearanceScreenProps) => {
-  const colorScheme = useColorScheme();
+  const {appTheme, toggleTheme} = useContext(MyThemeContext);
   const {colors} = useTheme();
 
-  const [checked, setChecked] = useState(
-    colorScheme === 'dark' ? 'dark' : 'light',
-  );
+  const [themeOptions, setThemeOptions] = useState([
+    {key: 'LIGHT', title: 'Light', checked: false},
+    {key: 'DARK', title: 'Dark', checked: false},
+    {key: 'SYSTEM', title: 'System Default', checked: true},
+  ]);
 
-  const handleThemeChange = value => {
-    setChecked(value);
-    // Apply theme change logic here
-    // For example, if using a theme provider, update the theme context
-  };
+  function toggleThemeLocal(key: string) {
+    let themeOptionsA = themeOptions.map(option => ({
+      ...option,
+      checked: option.key === key,
+    }));
+    setThemeOptions(themeOptionsA);
+    toggleTheme(key as AppTheme);
+  }
 
-  const themeOptions = [
-    {key: 'light', title: 'Light'},
-    {key: 'dark', title: 'Dark'},
-    {key: 'system', title: 'System Default'},
-  ];
   return (
-    <View>
-      {themeOptions.map(option => (
-        <List.Item
-          key={option.key}
-          title={option.title}
-          left={() => ListIcon()}
-        />
+    <View style={{backgroundColor: colors.background, flex: 1}}>
+      {themeOptions.map((option, index) => (
+        <View key={index}>
+          <List.Item
+            key={option.key}
+            title={option.title}
+            right={() => option.checked && ListIcon(colors.primary)}
+            onPress={() => toggleThemeLocal(option.key)}
+            titleStyle={{color: colors.primary}}
+          />
+          <Divider style={{backgroundColor: colors.primary}} />
+        </View>
       ))}
     </View>
   );

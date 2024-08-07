@@ -1,4 +1,10 @@
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RouteProp} from '@react-navigation/native';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import {MD3Colors} from 'react-native-paper/lib/typescript/types';
+import GooglePlacesInput from '../components/GooglePlacesInput';
 
 export type RootStackParamsList = {
   MainScreen: undefined;
@@ -43,7 +49,9 @@ export type AppTheme = 'DARK' | 'LIGHT' | 'SYSTEM';
 
 export interface ThemeProps {
   isThemeDark: boolean;
-  toggleTheme: () => void;
+  toggleTheme: (apptheme: AppTheme) => void;
+  appTheme: AppTheme;
+  theme: any;
 }
 // Weather
 export interface WeatherData {
@@ -151,3 +159,21 @@ export enum PressureCategory {
   Standard = 'Standard',
   High = 'High',
 }
+
+export enum AppThemeType {
+  dark = 'DARK',
+  light = 'LIGHT',
+  system = 'SYSTEM',
+}
+export type MoreOptionsProps = {
+  visible: boolean;
+  closeMenu: () => void;
+  openMenu: () => void;
+  navigation: NativeStackNavigationProp<RootStackParamsList, 'MainScreen'>;
+  route: RouteProp<RootStackParamsList, 'MainScreen'>;
+  colors: MD3Colors;
+};
+
+export type ItemProps = {index: number; item: WeatherData};
+
+export type googlePlaceInputHandle = React.ElementRef<typeof GooglePlacesInput>;
