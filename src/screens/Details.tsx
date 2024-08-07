@@ -11,7 +11,7 @@ import {styles} from '../styles';
 import {DetailsScreenProps, WeatherData} from '../types';
 import {getFirstWord, getWeatherDescription} from '../utils';
 import {useAppDispatch, useAppSelector} from '../redux/hooks';
-import {addWeatherData} from '../features/weather/weatherSlice';
+import {addWeatherData} from '../redux/features/weather/weatherSlice';
 
 export const weatherDataInitial = {
   title: '',
@@ -84,7 +84,6 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
     ...weatherDataInitial,
   });
   const weatherDataInStore = useAppSelector(state => state.weather.weatherData);
-  const [includesInDataAlready, setIncludesInDataAlready] = useState(false);
   const dispatch = useAppDispatch();
 
   const handleAddWeatherData = (data: WeatherData) => {
@@ -99,17 +98,10 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
       let weatherData: WeatherData = route.params.weatherData;
       if (weatherData) {
         setWeatherData(weatherData);
-        checkInList();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params]);
-
-  const checkInList = () => {
-    let includes = weatherDataInStore.includes(weatherData, 0);
-    console.log('includes', includes);
-    setIncludesInDataAlready(includes);
-  };
 
   return (
     <SafeAreaView
@@ -127,7 +119,9 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={{fontSize: 16}}>Cancel</Text>
         </TouchableOpacity>
-        {!includesInDataAlready && (
+        {weatherDataInStore.findIndex(
+          item => weatherData.title === item.title,
+        ) === -1 && (
           <TouchableOpacity onPress={() => handleAddWeatherData(weatherData)}>
             <Text style={{fontSize: 16}}>Add</Text>
           </TouchableOpacity>

@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {Text, View} from 'react-native';
+import React, {View} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {styles} from '../../styles';
 import {Current, CurrentUnits, Daily} from '../../types';
 import {formatDateTime} from '../../utils';
+import {Text, useTheme} from 'react-native-paper';
 const SunriseSunset = ({
   dailyData,
 }: {
@@ -14,15 +15,17 @@ const SunriseSunset = ({
   utc_offset_seconds: number;
   timezone: string;
 }) => {
+  const {colors} = useTheme();
+
   return (
     <View
       style={{
         ...styles.containerFlex,
+        backgroundColor: colors.secondaryContainer,
         width: '100%',
         gap: 5,
         borderRadius: 5,
         padding: 15,
-        backgroundColor: '#cecece',
       }}>
       <View
         style={{
@@ -32,7 +35,12 @@ const SunriseSunset = ({
           gap: 10,
         }}>
         <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-          <Icon testID="HumidityIcon" name="sunrise" size={20} color="black" />
+          <Icon
+            testID="HumidityIcon"
+            name="sunrise"
+            size={20}
+            color={colors.onSurface}
+          />
           <Text style={{fontSize: 18}}>Sunrise & Sunset</Text>
         </View>
         <View

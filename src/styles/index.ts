@@ -99,7 +99,6 @@ export const styles = StyleSheet.create({
     gap: 5,
     borderRadius: 5,
     padding: 10,
-    backgroundColor: '#cecece',
     flexBasis: '50%',
     aspectRatio: 1,
   },

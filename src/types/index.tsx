@@ -177,3 +177,15 @@ export type MoreOptionsProps = {
 export type ItemProps = {index: number; item: WeatherData};
 
 export type googlePlaceInputHandle = React.ElementRef<typeof GooglePlacesInput>;
+
+export type AsyncKeyValue = {
+  key: string;
+  value: string;
+};
+
+export type LocalStorageProps = {
+  saveString: ({key, value}: AsyncKeyValue) => Promise<boolean>;
+  save: ({key, value}: AsyncKeyValue) => void;
+  getFromAsyncStorage: (key: string) => Promise<string | null>;
+  removeString: (key: string) => Promise<boolean>;
+};

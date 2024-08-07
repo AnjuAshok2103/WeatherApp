@@ -42,8 +42,8 @@ const CurrentWeatherData = ({
       style={{
         justifyContent: 'space-around',
         flex: 1,
-        padding: 10,
         gap: 10,
+        marginHorizontal: 5,
       }}>
       <View style={{flexDirection: 'row', gap: 10}}>
         <WindCard currentData={currentData} currentUnits={currentUnits} />

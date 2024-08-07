@@ -1,6 +1,7 @@
+/* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react-native/no-inline-styles */
 import {View} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Fontisto';
 import {styles} from '../../styles';
 import {Current, CurrentUnits, Daily} from '../../types';
@@ -16,10 +17,13 @@ const UVIndex = ({
   currentUnits: CurrentUnits;
   dailyData: Daily;
 }) => {
+  const {colors} = useTheme();
+
   return (
     <View
       style={{
         ...styles.cardStyle,
+        backgroundColor: colors.secondaryContainer,
       }}>
       <View
         style={{
@@ -29,7 +33,12 @@ const UVIndex = ({
           gap: 10,
         }}>
         <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
-          <Icon testID="HumidityIcon" name="sun" size={20} color="black" />
+          <Icon
+            testID="HumidityIcon"
+            name="sun"
+            size={20}
+            color={colors.onSurface}
+          />
           <Text style={{fontSize: 18}}>UV Index</Text>
         </View>
         <View

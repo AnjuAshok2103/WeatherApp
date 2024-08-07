@@ -17,7 +17,8 @@ import ThemeContextProvider, {
   MyThemeContext,
 } from './src/contexts/ThemeContext';
 import {Provider} from 'react-redux';
-import {store} from './src/redux/store';
+import {persistor, store} from './src/redux/store';
+import {PersistGate} from 'redux-persist/integration/react';
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const {theme} = useContext(MyThemeContext);
@@ -36,9 +37,11 @@ function App(): React.JSX.Element {
 
 const AppWrapper = () => (
   <Provider store={store}>
-    <ThemeContextProvider>
-      <App />
-    </ThemeContextProvider>
+    <PersistGate loading={null} persistor={persistor}>
+      <ThemeContextProvider>
+        <App />
+      </ThemeContextProvider>
+    </PersistGate>
   </Provider>
 );
 

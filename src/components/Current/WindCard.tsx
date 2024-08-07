@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {View} from 'react-native';
-import {Divider, Text} from 'react-native-paper';
+import {Divider, Text, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import {styles} from '../../styles';
 import {Current, CurrentUnits} from '../../types';
@@ -13,10 +13,13 @@ const WindCard = ({
   currentData: Current;
   currentUnits: CurrentUnits;
 }) => {
+  const {colors} = useTheme();
+
   return (
     <View
       style={{
         ...styles.cardStyle,
+        backgroundColor: colors.secondaryContainer,
       }}>
       <View
         style={{
@@ -35,7 +38,7 @@ const WindCard = ({
             testID="WindDirectionIcon"
             name="wind"
             size={20}
-            color="black"
+            color={colors.onSurface}
           />
           <Text style={{fontSize: 18}}>Wind</Text>
         </View>

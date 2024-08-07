@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
 import {Daily} from '../../types';
 import {FlatList} from 'react-native';
@@ -11,8 +11,10 @@ import {
   getMonthName,
   roundTemperature,
 } from '../../utils';
+import {Text, useTheme} from 'react-native-paper';
 
 const DailyWeatherData = ({dailyData}: {dailyData: Daily}) => {
+  const {colors} = useTheme();
   const dailyDataFormatted = dailyData.time.map((time, index) => ({
     time,
     weather_code: dailyData.weather_code[index],
@@ -29,7 +31,7 @@ const DailyWeatherData = ({dailyData}: {dailyData: Daily}) => {
           ...styles.flexDRow,
           ...styles.alignItemCenter,
           ...styles.gap10,
-          backgroundColor: '#cecece',
+          backgroundColor: colors.secondaryContainer,
           ...styles.marginVertical5,
           ...styles.borderRadius5,
           ...styles.paddingVertical5,
@@ -52,7 +54,7 @@ const DailyWeatherData = ({dailyData}: {dailyData: Daily}) => {
               isoString: item.time,
             })}
             size={30}
-            color="black"
+            color={colors.onSurface}
           />
         </View>
         <View style={{...styles.containerFlex, ...styles.alignItemEnd}}>

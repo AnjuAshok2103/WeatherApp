@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, useTheme} from 'react-native-paper';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -22,6 +22,7 @@ const SunAnimation: React.FC<SunAnimationProps> = ({uvIndex = 1}) => {
   const height = useSharedValue(0);
   const opacity = useSharedValue(0);
   const iconSize = 10;
+  const {colors} = useTheme();
 
   const animate = () => {
     height.value = withTiming(fillHeight, {duration: 1000});
@@ -85,7 +86,7 @@ const SunAnimation: React.FC<SunAnimationProps> = ({uvIndex = 1}) => {
           testID="WindDirectionIcon"
           name="caret-forward"
           size={iconSize}
-          color="black"
+          color={colors.primary}
         />
       </View>
     </View>

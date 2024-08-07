@@ -15,7 +15,7 @@ import GooglePlacesInput from '../components/GooglePlacesInput';
 import Title from '../components/Title';
 import {MyThemeContext} from '../contexts/ThemeContext';
 import useKeyboardVisible from '../customHook/useKeyboardVisible';
-import {removeWeatherData} from '../features/weather/weatherSlice';
+import {removeWeatherData} from '../redux/features/weather/weatherSlice';
 import {useAppDispatch, useAppSelector} from '../redux/hooks';
 import {styles} from '../styles';
 import {
@@ -93,14 +93,6 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
     </Menu>
   );
 
-  useEffect(() => {
-    console.log('theme', appTheme);
-    navigation.setOptions({
-      headerRight: MoreMenu,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme, visible]);
-
   const handleRemoveWeatherData = (index: number) => {
     dispatch(removeWeatherData({index: index}));
   };
@@ -163,6 +155,15 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
       }
     }, 1500);
   }
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: MoreMenu,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme, visible]);
+
+  useEffect(() => {}, []);
 
   const Item = ({item, index}: ItemProps) => (
     <TouchableOpacity
@@ -254,13 +255,15 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
                 borderRadius: 10,
                 margin: 10,
               }}
-              activeOpacity={1}>
-              <IconButton
-                icon="trash-can"
-                size={30}
-                iconColor={colors.primary}
-                onPress={() => handleRemoveWeatherData(index)}
-              />
+              activeOpacity={0.7}>
+              <View>
+                <IconButton
+                  icon="trash-can"
+                  size={30}
+                  iconColor={colors.primary}
+                  onPress={() => handleRemoveWeatherData(index)}
+                />
+              </View>
             </TouchableOpacity>
           ) : (
             <View />
@@ -270,7 +273,6 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
         keyExtractor={item => item.title}
         onSwipeValueChange={({key, value}) => {
           if (value < -Dimensions.get('screen').width) {
-            console.log('vlaue', value);
             handleRemoveWeatherData(
               weatherData.findIndex(item => item.title.includes(key)),
             );

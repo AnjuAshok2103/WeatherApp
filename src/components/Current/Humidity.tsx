@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {View} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {styles} from '../../styles';
 import {Current, CurrentUnits} from '../../types';
@@ -14,10 +14,12 @@ const Humidity = ({
   currentData: Current;
   currentUnits: CurrentUnits;
 }) => {
+  const {colors} = useTheme();
   return (
     <View
       style={{
         ...styles.cardStyle,
+        backgroundColor: colors.secondaryContainer,
       }}>
       <View
         style={{
@@ -36,7 +38,7 @@ const Humidity = ({
             testID="HumidityIcon"
             name="air-humidifier"
             size={20}
-            color="black"
+            color={colors.onSurface}
           />
           <Text style={{fontSize: 18}}>Humidity</Text>
         </View>

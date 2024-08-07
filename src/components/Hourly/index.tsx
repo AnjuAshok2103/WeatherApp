@@ -1,4 +1,4 @@
-import React, {Text, View} from 'react-native';
+import React, {View} from 'react-native';
 import {Hourly} from '../../types';
 import Icon from 'react-native-vector-icons/Fontisto';
 import {styles} from '../../styles';
@@ -8,6 +8,7 @@ import {
   getIconName,
 } from '../../utils';
 import {ScrollView} from 'react-native-gesture-handler';
+import {Text, useTheme} from 'react-native-paper';
 
 const HourlyWeatherCard = ({
   hourlyData,
@@ -19,6 +20,7 @@ const HourlyWeatherCard = ({
   timezone: string;
   currentTime: string;
 }) => {
+  const {colors} = useTheme();
   const filtered: Hourly = filterWeatherDataFromNow({
     data: hourlyData,
     isoStringNow: currentTime,
@@ -29,7 +31,7 @@ const HourlyWeatherCard = ({
       style={{
         ...styles.displayFlexCenter,
         ...styles.borderRadius5,
-        backgroundColor: '#cecece',
+        backgroundColor: colors.secondaryContainer,
       }}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {filtered.time.map((item, index) => {
@@ -53,7 +55,7 @@ const HourlyWeatherCard = ({
                   isoString: item,
                 })}
                 size={30}
-                color="black"
+                color={colors.onSurface}
               />
 
               <Text> {`${hourlyData.temperature_2m[index]}\u00B0`}</Text>

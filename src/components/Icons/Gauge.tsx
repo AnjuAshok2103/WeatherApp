@@ -1,5 +1,6 @@
 import React from 'react';
 import {View} from 'react-native';
+import {useTheme} from 'react-native-paper';
 import Svg, {G, Path, Line, Text as SvgText, Circle} from 'react-native-svg';
 
 interface GaugeProps {
@@ -53,6 +54,7 @@ const Gauge: React.FC<GaugeProps> = ({value, maxValue}) => {
       />
     );
   });
+  const {colors} = useTheme();
 
   return (
     <View style={{alignItems: 'center', justifyContent: 'center'}}>
@@ -83,7 +85,7 @@ const Gauge: React.FC<GaugeProps> = ({value, maxValue}) => {
             y={centerY + radius / 2}
             textAnchor="middle"
             fontSize="20"
-            fill="black">
+            fill={colors.primary}>
             {value}
           </SvgText>
         </G>
