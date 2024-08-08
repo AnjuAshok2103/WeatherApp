@@ -83,7 +83,9 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
   const [weatherData, setWeatherData] = useState<WeatherData>({
     ...weatherDataInitial,
   });
-  const weatherDataInStore = useAppSelector(state => state.weather.weatherData);
+  const weatherDataInStore: WeatherData[] = useAppSelector(
+    state => state.weather.weatherData,
+  );
   const dispatch = useAppDispatch();
 
   const handleAddWeatherData = (data: WeatherData) => {
@@ -134,7 +136,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
             ...styles.displayFlexCenter,
           }}>
           <Text variant="headlineLarge">{getFirstWord(weatherData.title)}</Text>
-          <Text variant="displayLarge">{`${weatherData.current.temperature_2m}\u00B0`}</Text>
+          <Text variant="displayLarge">{`${weatherData.current.temperature_2m} ${weatherData.current_units.temperature_2m}`}</Text>
           <Text variant="headlineSmall">
             {getWeatherDescription(weatherData.current.weather_code)}
           </Text>
@@ -153,6 +155,7 @@ const Details = ({navigation, route}: DetailsScreenProps) => {
             utc_offset_seconds={weatherData.utc_offset_seconds}
             generationtime_ms={weatherData.generationtime_ms}
             currentTime={weatherData.current.time}
+            timezone_abbreviation={weatherData.timezone_abbreviation}
           />
         </View>
         <View

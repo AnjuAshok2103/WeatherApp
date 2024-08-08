@@ -1,14 +1,20 @@
-import React, {View} from 'react-native';
-import {Hourly} from '../../types';
-import Icon from 'react-native-vector-icons/Fontisto';
-import {styles} from '../../styles';
+/* eslint-disable react/react-in-jsx-scope */
 import {
-  filterWeatherDataFromNow,
-  formatDateTime,
-  getIconName,
-} from '../../utils';
+  addDays,
+  format,
+  isAfter,
+  isBefore,
+  parseISO,
+  startOfDay,
+} from 'date-fns';
+import {isSameHour} from 'date-fns/isSameHour';
+import {View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Text, useTheme} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {styles} from '../../styles';
+import {Hourly} from '../../types';
+import {getIconName} from '../../utils';
 
 const HourlyWeatherCard = ({
   hourlyData,
@@ -19,12 +25,35 @@ const HourlyWeatherCard = ({
   utc_offset_seconds: number;
   timezone: string;
   currentTime: string;
+  timezone_abbreviation: string;
 }) => {
   const {colors} = useTheme();
-  const filtered: Hourly = filterWeatherDataFromNow({
-    data: hourlyData,
-    isoStringNow: currentTime,
-  });
+  const filteredData: Hourly = {
+    time: [],
+    temperature_2m: [],
+    weather_code: [],
+  };
+  let timeISOStringArray: string[] = [];
+  const currentTimeParsed = parseISO(currentTime);
+  const endTime = addDays(startOfDay(currentTime), 1);
+  endTime.setHours(currentTimeParsed.getHours());
+  endTime.setMinutes(currentTimeParsed.getMinutes());
+
+  let data = hourlyData.time;
+  for (let i = 0; i < data.length; i++) {
+    const timeParsed = parseISO(data[i]);
+    if (
+      (isAfter(timeParsed, currentTime) && isBefore(timeParsed, endTime)) ||
+      isSameHour(timeParsed, currentTime)
+    ) {
+      timeISOStringArray.push(data[i]);
+      filteredData.time.push(format(timeParsed, 'h a'));
+      filteredData.temperature_2m.push(hourlyData.temperature_2m[i]);
+      filteredData.weather_code.push(hourlyData.weather_code[i]);
+    }
+  }
+
+  console.log('f', JSON.stringify(filteredData));
 
   return (
     <View
@@ -34,7 +63,7 @@ const HourlyWeatherCard = ({
         backgroundColor: colors.secondaryContainer,
       }}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {filtered.time.map((item, index) => {
+        {filteredData.time.map((item, index) => {
           return (
             <View
               key={`${item}${index}`}
@@ -42,23 +71,19 @@ const HourlyWeatherCard = ({
                 ...styles.displayFlexCenter,
                 ...styles.hourlyItem,
               }}>
-              <Text>
-                {formatDateTime({
-                  isoString: item,
-                })}
-              </Text>
+              <Text>{item}</Text>
 
               <Icon
                 testID="HourlyIcon"
                 name={getIconName({
-                  weatherCode: hourlyData.weather_code[index],
-                  isoString: item,
+                  weatherCode: filteredData.weather_code[index],
+                  isoString: timeISOStringArray[index],
                 })}
                 size={30}
                 color={colors.onSurface}
               />
 
-              <Text> {`${hourlyData.temperature_2m[index]}\u00B0`}</Text>
+              <Text> {`${filteredData.temperature_2m[index]}\u00B0`}</Text>
             </View>
           );
         })}

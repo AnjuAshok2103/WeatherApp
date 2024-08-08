@@ -5,6 +5,7 @@ import {styles} from '../../styles';
 import {Current, CurrentUnits, Daily} from '../../types';
 import {formatDateTime} from '../../utils';
 import {Text, useTheme} from 'react-native-paper';
+import SunsetSunrise from '../Icons/SunsetSunriseWave';
 const SunriseSunset = ({
   dailyData,
 }: {
@@ -73,6 +74,12 @@ const SunriseSunset = ({
               })}
             </Text>
           </View>
+        </View>
+        <View style={{flex: 1}}>
+          <SunsetSunrise
+            sunrise={dailyData.sunrise[0]}
+            sunset={dailyData.sunset[0]}
+          />
         </View>
       </View>
     </View>

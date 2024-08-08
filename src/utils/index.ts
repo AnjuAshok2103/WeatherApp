@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {
   iconList,
   iconListNight,
@@ -8,7 +7,6 @@ import {
   UVLevelsInfoText,
   weatherCodeDescriptions,
 } from '../consts';
-import {Hourly, HourlyUnits} from '../types';
 
 export const getFirstWord = (str: string) => {
   const words = str.split(',');
@@ -43,34 +41,13 @@ export const getIconName = ({
     ? iconList[weatherCode]
     : iconListNight[weatherCode] || 'unknown-icon';
 };
-export function formatDate(isoString: string): string {
-  const date = new Date(isoString);
-  const now = new Date();
-
-  // Check if the given time is the current time
-  if (
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate()
-  ) {
-    return 'Today';
-  }
-
-  // Format the time in 12-hour format with AM/PM
-  const dateFormat = date.getDate();
-  const month = date.getMonth();
-  const day = date.getDay();
-  return `${dateFormat}, ${day},${month}`;
-}
 
 export function formatDateTime({
   isoString,
   showMinutes,
-  showNow = true,
 }: {
   isoString: string;
   showMinutes?: boolean;
-  showNow?: boolean;
 }): string {
   const date = new Date(isoString);
   const now = new Date();
@@ -80,8 +57,7 @@ export function formatDateTime({
     date.getFullYear() === now.getFullYear() &&
     date.getMonth() === now.getMonth() &&
     date.getDate() === now.getDate() &&
-    date.getHours() === now.getHours() &&
-    showNow
+    date.getHours() === now.getHours()
   ) {
     return 'Now';
   }
@@ -98,39 +74,6 @@ export function formatDateTime({
   } ${ampm}`;
 }
 
-// Function to filter data starting from the current time
-export const filterWeatherDataFromNow = ({
-  data,
-  isoStringNow,
-}: {
-  data: Hourly;
-  isoStringNow: string;
-}): any => {
-  const now = moment(isoStringNow);
-  const currentISOTime = now.toISOString();
-  const nextDayISOTime = now.clone().add(1, 'day').toISOString();
-
-  const filteredData: Hourly = {
-    time: [],
-    temperature_2m: [],
-    weather_code: [],
-  };
-
-  for (let i = 0; i < data.time.length; i++) {
-    const time = moment(data.time[i]).toISOString();
-    const timeHour = moment(data.time[i]);
-    if (
-      (moment(time).isSameOrAfter(currentISOTime) &&
-        moment(time).isSameOrBefore(nextDayISOTime)) ||
-      timeHour.hour() === now.hour()
-    ) {
-      filteredData.time.push(data.time[i]);
-      filteredData.temperature_2m.push(data.temperature_2m[i]);
-      filteredData.weather_code.push(data.weather_code[i]);
-    }
-  }
-  return filteredData;
-};
 export function getDate(dateString: string): number {
   const date = new Date(dateString);
   return date.getDate();
@@ -159,6 +102,7 @@ export function getMonthName(dateString: string): string {
   const date = new Date(dateString);
   return monthsOfYear[date.getMonth()].slice(0, 3);
 }
+
 export function getDayName(dateString: string): string {
   const dateFormatted = new Date(dateString);
   const now = new Date();

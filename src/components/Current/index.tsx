@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useRef} from 'react';
 import {Animated, Easing, View} from 'react-native';
-import {styles} from '../../styles';
 import {Current, CurrentUnits, Daily} from '../../types';
 import WindCard from './WindCard';
 import Humidity from './Humidity';

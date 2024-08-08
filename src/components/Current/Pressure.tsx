@@ -39,13 +39,12 @@ const Pressure = ({
           />
           <Text style={{fontSize: 18}}>Pressure</Text>
         </View>
-        <GaugeWrapper pressure={currentData.surface_pressure} />
         <View
           style={{
             flex: 1,
-            justifyContent: 'center',
-            gap: 5,
+            alignSelf: 'center',
           }}>
+          <GaugeWrapper pressure={currentData.surface_pressure} />
           <Text>
             {classifyPressure(currentData.surface_pressure)}
             <Text

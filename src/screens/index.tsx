@@ -102,11 +102,12 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
     if (contentOffset.y >= 80) {
       navigation.setOptions({
         headerTitle: 'Weather',
-        headerTintColor: 'red',
+        headerTintColor: colors.primary,
       });
     } else {
       navigation.setOptions({
         headerTitle: '',
+        headerTintColor: colors.primary,
       });
     }
   };
@@ -134,8 +135,7 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
           title: title,
           ...json,
         };
-        console.log('json', JSON.stringify(jsonToSend.title));
-
+        console.log('json', JSON.stringify(jsonToSend));
         navigation.navigate('Details', {weatherData: jsonToSend});
       })
       .catch(error => console.error(error));
@@ -190,7 +190,6 @@ export default function MainScreen({navigation, route}: MainScreenProps) {
             {formatDateTime({
               isoString: item.current.time,
               showMinutes: true,
-              showNow: false,
             })}
           </Text>
         </View>

@@ -3,7 +3,7 @@ import React from 'react';
 import {Daily} from '../../types';
 import {FlatList} from 'react-native';
 import {styles} from '../../styles';
-import Icon from 'react-native-vector-icons/Fontisto';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   getDate,
   getDayName,

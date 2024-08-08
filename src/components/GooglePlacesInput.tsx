@@ -39,6 +39,7 @@ const GooglePlacesInput = forwardRef(
             },
           };
           onPress(dataToPass);
+          googlePlacesRef?.current?.clear();
         }}
         fetchDetails={true}
         query={{
