@@ -69,7 +69,7 @@ export function formatDateTime({
   const formattedHours = hours % 12 || 12;
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
-  return `${formattedHours} ${
+  return `${formattedHours}${
     showMinutes ? `:${formattedMinutes}` : ''
   } ${ampm}`;
 }

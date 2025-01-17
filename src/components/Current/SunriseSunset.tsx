@@ -1,11 +1,11 @@
+/* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable react-native/no-inline-styles */
-import React, {View} from 'react-native';
+import {View} from 'react-native';
+import {Text, useTheme} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import {styles} from '../../styles';
 import {Current, CurrentUnits, Daily} from '../../types';
 import {formatDateTime} from '../../utils';
-import {Text, useTheme} from 'react-native-paper';
-import SunsetSunrise from '../Icons/SunsetSunriseWave';
 const SunriseSunset = ({
   dailyData,
 }: {
@@ -37,49 +37,46 @@ const SunriseSunset = ({
         }}>
         <View style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
           <Icon
-            testID="HumidityIcon"
+            testID="SunriseIcon"
             name="sunrise"
             size={20}
             color={colors.onSurface}
           />
           <Text style={{fontSize: 18}}>Sunrise & Sunset</Text>
         </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            gap: 20,
-          }}>
-          <View style={{gap: 5}}>
-            <Text>Sunrise</Text>
-            <Text
-              style={{
-                fontSize: 16,
-              }}>
-              {formatDateTime({
-                isoString: dailyData.sunrise[0],
-                showMinutes: true,
-              })}
-            </Text>
+        <View style={{flex: 1, flexDirection: 'row', gap: 10}}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              gap: 20,
+            }}>
+            <View style={{gap: 5}}>
+              <Text>Sunrise</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                }}>
+                {formatDateTime({
+                  isoString: dailyData.sunrise[0],
+                  showMinutes: true,
+                })}
+              </Text>
+            </View>
+            <View style={{gap: 5}}>
+              <Text>Sunset</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                }}>
+                {formatDateTime({
+                  isoString: dailyData.sunset[0],
+                  showMinutes: true,
+                })}
+              </Text>
+            </View>
           </View>
-          <View style={{gap: 5}}>
-            <Text>Sunset</Text>
-            <Text
-              style={{
-                fontSize: 16,
-              }}>
-              {formatDateTime({
-                isoString: dailyData.sunset[0],
-                showMinutes: true,
-              })}
-            </Text>
-          </View>
-        </View>
-        <View style={{flex: 1}}>
-          <SunsetSunrise
-            sunrise={dailyData.sunrise[0]}
-            sunset={dailyData.sunset[0]}
-          />
         </View>
       </View>
     </View>
